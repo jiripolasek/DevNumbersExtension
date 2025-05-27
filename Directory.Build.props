@@ -1,0 +1,20 @@
+<Project>
+	<PropertyGroup>
+		<Platforms>x64;ARM64</Platforms>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<AnalysisMode>Recommended</AnalysisMode>
+		<NuGetAuditMode>direct</NuGetAuditMode>
+		<PlatformTarget>$(Platform)</PlatformTarget>
+
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>preview</LangVersion>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<DebugType>embedded</DebugType>
+
+		<Company>Jiri Polasek</Company>
+		<Copyright>(c) Jiri Polasek</Copyright>
+		<NeutralLanguage>en-US</NeutralLanguage>
+	</PropertyGroup>
+</Project>

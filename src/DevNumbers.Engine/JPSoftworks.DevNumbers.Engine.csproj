@@ -1,0 +1,8 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<AssemblyName>JPSoftworks.DevNumbers.Engine</AssemblyName>
+		<RootNamespace>JPSoftworks.DevNumbers.Engine</RootNamespace>
+	</PropertyGroup>
+
+</Project>
