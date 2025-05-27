@@ -16,6 +16,7 @@
 		<AssemblyName>JPSoftworks.DevNumbers</AssemblyName>
 		<Product>Colors for Command Palette</Product>
 		<AssemblyTitle>Colors for Command Palette</AssemblyTitle>
+		<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
   </PropertyGroup>
 
 	<!-- Add InternalsVisibleTo to allow test project access to internal members -->
