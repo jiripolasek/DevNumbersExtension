@@ -17,6 +17,7 @@
 		<AssemblyName>JPSoftworks.DevNumbers</AssemblyName>
 		<Product>Dev Numbers for Palette</Product>
 		<AssemblyTitle>Dev Numbers for Command Palette</AssemblyTitle>
+		<ApplicationIcon>Resources\app.ico</ApplicationIcon>
   </PropertyGroup>
 
 	<ItemGroup>
@@ -32,6 +33,7 @@
 		<Content Include="Assets\Square44x44Logo.scale-200.png" />
 		<Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
 		<Content Include="Assets\Wide310x150Logo.scale-200.png" />
+		<Content Include="Resources\app.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
