@@ -41,6 +41,7 @@ public sealed partial class DevNumbersCommandsProvider : CommandProvider
                 Icon = Icons.BaseConverterPage,
                 MoreCommands = [
                     new CommandContextItem(this.Settings!.SettingsPage!),
+                    new CommandContextItem(new HelpPage())
                 ]}
         ];
     }

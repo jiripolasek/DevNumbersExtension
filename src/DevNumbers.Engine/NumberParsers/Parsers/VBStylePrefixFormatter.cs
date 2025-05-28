@@ -40,7 +40,7 @@ internal class VBStylePrefixFormatter : NumberFormatterBase
 
     public override string Format(BigInteger value, NumberBase format, FormatInfo formatInfo)
     {
-        var style = BigIntegerBaseStyle.FromFormatInfo(format, formatInfo) with { AllowGroupSeparator = false };
+        var style = BigIntegerBaseStyle.FromFormatInfo(format, formatInfo) with { AllowGroupSeparator = true, GroupSeparator = '_' };
         string baseValue = ConvertToBase(value, style);
         string prefix = this.GetDefaultAffix(format);
         return prefix + baseValue;

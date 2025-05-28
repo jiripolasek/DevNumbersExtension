@@ -334,8 +334,6 @@ internal record ParseResult(
 {
     public bool HasErrors => this.Errors.Count > 0;
 
-    public bool IsValid => !this.HasErrors;
-
     public override string ToString()
     {
         var result = $"Query: '{this.Query}', {this.Options}";

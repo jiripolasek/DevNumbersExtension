@@ -136,7 +136,7 @@ internal static class BigIntegerCharacterInference
             if (value <= 0)
                 return null;
 
-            byte[] bytes = value.ToByteArray(isUnsigned: true, isBigEndian: true);
+            var bytes = value.ToByteArray(isUnsigned: true, isBigEndian: true);
 
             if (bytes.Length <= 1)
                 return null;
@@ -147,7 +147,7 @@ internal static class BigIntegerCharacterInference
             var stringBuilder = new StringBuilder();
             var hexBytes = new List<string>();
 
-            foreach (byte b in bytes)
+            foreach (var b in bytes)
             {
                 hexBytes.Add($"0x{b:X2}");
 
@@ -190,8 +190,8 @@ internal static class BigIntegerCharacterInference
         if (value < 0 || value > 127)
             return null;
 
-        byte asciiValue = (byte)value;
-        string character = asciiValue is >= 32 and <= 126
+        var asciiValue = (byte)value;
+        var character = asciiValue is >= 32 and <= 126
             ? ((char)asciiValue).ToString()
             : GetControlCharacterName(asciiValue);
 
@@ -217,13 +217,11 @@ internal static class BigIntegerCharacterInference
             if (value < 0)
                 return null;
 
-            byte[] bytes = value.ToByteArray(isUnsigned: true, isBigEndian: true);
+            var bytes = value.ToByteArray(isUnsigned: true, isBigEndian: true);
 
-            // Try to decode as UTF-8
-            string decoded = Encoding.UTF8.GetString(bytes);
+            var decoded = Encoding.UTF8.GetString(bytes);
 
-            // Validate - re-encode and compare
-            byte[] reencoded = Encoding.UTF8.GetBytes(decoded);
+            var reencoded = Encoding.UTF8.GetBytes(decoded);
             if (!bytes.SequenceEqual(reencoded))
                 return null;
 
@@ -254,16 +252,16 @@ internal static class BigIntegerCharacterInference
             if (value < 0 || value > 0x10FFFF)
                 return null;
 
-            int codePoint = (int)value;
+            var codePoint = (int)value;
 
             if (codePoint is >= 0xD800 and <= 0xDFFF)
                 return null; // Invalid surrogate code point used alone
 
-            string character = codePoint <= 0xFFFF
+            var character = codePoint <= 0xFFFF
                 ? ((char)codePoint).ToString()
                 : char.ConvertFromUtf32(codePoint);
 
-            string displayCharacter = GetDisplayCharacter(character, codePoint);
+            var displayCharacter = GetDisplayCharacter(character, codePoint);
 
             return new CharacterResult
             {
@@ -292,14 +290,14 @@ internal static class BigIntegerCharacterInference
             if (value < 0 || value > 0x10FFFF)
                 return null;
 
-            int codePoint = (int)value;
+            var codePoint = (int)value;
 
             // Check for invalid surrogate code points
             if (codePoint is >= 0xD800 and <= 0xDFFF)
                 return null;
 
-            string character = char.ConvertFromUtf32(codePoint);
-            string displayCharacter = GetDisplayCharacter(character, codePoint);
+            var character = char.ConvertFromUtf32(codePoint);
+            var displayCharacter = GetDisplayCharacter(character, codePoint);
 
             return new CharacterResult
             {
@@ -327,7 +325,7 @@ internal static class BigIntegerCharacterInference
         if (string.IsNullOrEmpty(character))
             return $"U+{codePoint:X4}";
 
-        char firstChar = character[0];
+        var firstChar = character[0];
 
         // Handle common non-printable ranges
         if (codePoint <= 0x1F)

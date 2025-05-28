@@ -70,6 +70,24 @@ namespace JPSoftworks.DevNumbers.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show help.
+        /// </summary>
+        internal static string Command_ShowHelp_Name {
+            get {
+                return ResourceManager.GetString("Command_ShowHelp_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show help.
+        /// </summary>
+        internal static string Command_ShowHelp_Title {
+            get {
+                return ResourceManager.GetString("Command_ShowHelp_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show conversions of {0}....
         /// </summary>
         internal static string ConversionFallbackSubtitle {
@@ -160,7 +178,7 @@ namespace JPSoftworks.DevNumbers.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Type a number to convert (123, 0xFF, 234hex, 0b1011_0110, 0&apos;123&apos;456).
+        ///   Looks up a localized string similar to Type a number to convert....
         /// </summary>
         internal static string NumberBaseConversionPage_Placeholder {
             get {
@@ -259,11 +277,29 @@ namespace JPSoftworks.DevNumbers.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ada style.
+        /// </summary>
+        internal static string StyleName_AdaStyle_Inner {
+            get {
+                return ResourceManager.GetString("StyleName_AdaStyle_Inner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to C++ style (with &apos; as digit group separator).
         /// </summary>
         internal static string StyleName_CppStyle {
             get {
                 return ResourceManager.GetString("StyleName_CppStyle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to C++ style.
+        /// </summary>
+        internal static string StyleName_CppStyle_Inner {
+            get {
+                return ResourceManager.GetString("StyleName_CppStyle_Inner", resourceCulture);
             }
         }
         
@@ -277,6 +313,15 @@ namespace JPSoftworks.DevNumbers.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to C# style.
+        /// </summary>
+        internal static string StyleName_CSharp_Inner {
+            get {
+                return ResourceManager.GetString("StyleName_CSharp_Inner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (infer from input).
         /// </summary>
         internal static string StyleName_Infer {
@@ -286,11 +331,20 @@ namespace JPSoftworks.DevNumbers.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multicharacter suffix (FFhex, 123dec, 111bin).
+        ///   Looks up a localized string similar to Multi-character suffix (FFhex, 123dec, 111bin).
         /// </summary>
         internal static string StyleName_MultiCharSuffix {
             get {
                 return ResourceManager.GetString("StyleName_MultiCharSuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to multi-character.
+        /// </summary>
+        internal static string StyleName_MultiCharSuffix_Inner {
+            get {
+                return ResourceManager.GetString("StyleName_MultiCharSuffix_Inner", resourceCulture);
             }
         }
         
@@ -304,11 +358,29 @@ namespace JPSoftworks.DevNumbers.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to LISP style.
+        /// </summary>
+        internal static string StyleName_RStyle_Inner {
+            get {
+                return ResourceManager.GetString("StyleName_RStyle_Inner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Single character prefix (hFF).
         /// </summary>
         internal static string StyleName_SingleCharPrefix {
             get {
                 return ResourceManager.GetString("StyleName_SingleCharPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to single-character prefix.
+        /// </summary>
+        internal static string StyleName_SingleCharPrefix_Inner {
+            get {
+                return ResourceManager.GetString("StyleName_SingleCharPrefix_Inner", resourceCulture);
             }
         }
         
@@ -322,11 +394,29 @@ namespace JPSoftworks.DevNumbers.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to single-character suffix.
+        /// </summary>
+        internal static string StyleName_SingleCharSuffix_Inner {
+            get {
+                return ResourceManager.GetString("StyleName_SingleCharSuffix_Inner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Special character prefix (#FF, @77, %11).
         /// </summary>
         internal static string StyleName_SpecialCharPrefix {
             get {
                 return ResourceManager.GetString("StyleName_SpecialCharPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to special character prefix.
+        /// </summary>
+        internal static string StyleName_SpecialCharPrefix_Inner {
+            get {
+                return ResourceManager.GetString("StyleName_SpecialCharPrefix_Inner", resourceCulture);
             }
         }
         
@@ -340,11 +430,29 @@ namespace JPSoftworks.DevNumbers.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to standard style.
+        /// </summary>
+        internal static string StyleName_Standard_Inner {
+            get {
+                return ResourceManager.GetString("StyleName_Standard_Inner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to VB style (&amp;hFF, &amp;b1010, &amp;o777).
         /// </summary>
         internal static string StyleName_VBStyle {
             get {
                 return ResourceManager.GetString("StyleName_VBStyle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to VB style.
+        /// </summary>
+        internal static string StyleName_VBStyle_Inner {
+            get {
+                return ResourceManager.GetString("StyleName_VBStyle_Inner", resourceCulture);
             }
         }
     }

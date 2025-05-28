@@ -68,9 +68,8 @@ public static class NumberParser
         if (string.IsNullOrWhiteSpace(input))
             throw new ArgumentException("Input cannot be null or empty", nameof(input));
 
-        var trimmedInput = input.Trim();
+        var trimmedInput = NormalizeInput(input);
 
-        // Try each parser in order
         foreach (var parser in Parsers)
         {
             if (parser.TryParse(trimmedInput, out var result))
@@ -80,6 +79,36 @@ public static class NumberParser
         }
 
         throw new FormatException($"Unable to parse the input as any known number format: {input}");
+    }
+
+
+    private static string NormalizeInput(string input)
+    {
+        var trimmedInput = input.Trim();
+        return trimmedInput.Length >= 2 && trimmedInput[0] == '\'' && trimmedInput[^1] == '\''
+            ? trimmedInput
+            : string.Concat(trimmedInput.Where(static c => !char.IsWhiteSpace(c)));
+    }
+
+    public static bool TryParse(string input, out InputFormatParserResult? result)
+    {
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            result = null;
+            return false;
+        }
+
+        var trimmedInput = NormalizeInput(input);
+        
+        foreach (var parser in Parsers)
+        {
+            if (parser.TryParse(trimmedInput, out result))
+            {
+                return true;
+            }
+        }
+        result = null;
+        return false;
     }
 
     /// <summary>
@@ -152,8 +181,10 @@ public static class NumberParser
 
         if (!formatter.SupportsBase(@base))
         {
-            formatter = Formatters[0];
+            formatter = Formatters.FirstOrDefault(pair => pair.Value.SupportsBase(@base)).Value;
         }
+
+        formatter ??= Formatters[0];
 
         return formatter.Format(value, @base, formatInfo);
     }
