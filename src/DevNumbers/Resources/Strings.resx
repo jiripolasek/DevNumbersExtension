@@ -117,12 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Setting_DefaultFormattingStyle_Subtitle" xml:space="preserve">
-    <value>How to display numbers after conversion</value>
-  </data>
-  <data name="Setting_DefaultFormattingStyle_Title" xml:space="preserve">
-    <value>Default style</value>
-  </data>
   <data name="StyleName_CppStyle" xml:space="preserve">
     <value>C++ style (with ' as digit group separator)</value>
   </data>
@@ -248,5 +242,17 @@
   </data>
   <data name="Command_ShowHelp_Title" xml:space="preserve">
     <value>Show help</value>
+  </data>
+  <data name="Setting_DefaultFormattingStyle_Label" xml:space="preserve">
+    <value>Default style</value>
+  </data>
+  <data name="Setting_DefaultFormattingStyle_Description" xml:space="preserve">
+    <value>How to display numbers after conversion</value>
+  </data>
+  <data name="StyleName_CStyle" xml:space="preserve">
+    <value>C style (0xFF, 0777; without digit group separator)</value>
+  </data>
+  <data name="StyleName_CStyle_Inner" xml:space="preserve">
+    <value>C style</value>
   </data>
 </root>

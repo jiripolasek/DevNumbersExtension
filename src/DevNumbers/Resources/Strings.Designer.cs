@@ -252,18 +252,18 @@ namespace JPSoftworks.DevNumbers.Resources {
         /// <summary>
         ///   Looks up a localized string similar to How to display numbers after conversion.
         /// </summary>
-        internal static string Setting_DefaultFormattingStyle_Subtitle {
+        internal static string Setting_DefaultFormattingStyle_Description {
             get {
-                return ResourceManager.GetString("Setting_DefaultFormattingStyle_Subtitle", resourceCulture);
+                return ResourceManager.GetString("Setting_DefaultFormattingStyle_Description", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Default style.
         /// </summary>
-        internal static string Setting_DefaultFormattingStyle_Title {
+        internal static string Setting_DefaultFormattingStyle_Label {
             get {
-                return ResourceManager.GetString("Setting_DefaultFormattingStyle_Title", resourceCulture);
+                return ResourceManager.GetString("Setting_DefaultFormattingStyle_Label", resourceCulture);
             }
         }
         
@@ -318,6 +318,24 @@ namespace JPSoftworks.DevNumbers.Resources {
         internal static string StyleName_CSharp_Inner {
             get {
                 return ResourceManager.GetString("StyleName_CSharp_Inner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to C style (0xFF, 0777; without digit group separator).
+        /// </summary>
+        internal static string StyleName_CStyle {
+            get {
+                return ResourceManager.GetString("StyleName_CStyle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to C style.
+        /// </summary>
+        internal static string StyleName_CStyle_Inner {
+            get {
+                return ResourceManager.GetString("StyleName_CStyle_Inner", resourceCulture);
             }
         }
         
