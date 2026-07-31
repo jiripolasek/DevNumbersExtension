@@ -153,6 +153,9 @@
   <data name="NumberBase_Binary" xml:space="preserve">
     <value>binary</value>
   </data>
+  <data name="NumberBase_ByteSwapped16Bit" xml:space="preserve">
+    <value>Byte swapped (16-bit)</value>
+  </data>
   <data name="NumberBase_Octal" xml:space="preserve">
     <value>octal</value>
   </data>
