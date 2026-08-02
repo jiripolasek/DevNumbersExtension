@@ -147,16 +147,10 @@ internal sealed partial class NumberBaseConversionPage : DynamicListPage
                     new NumericValueListItem(actualValue, NumberBase.Octal, Strings.NumberBase_Octal!, targetStyle)
                 ]);
 
-                // Byte swapping is meaningful only when the value produced after any
-                // explicit /length truncation fits a two-byte signed or unsigned pattern.
-                // The standard numeric list item keeps its title, copy command, alternate
-                // format commands, and base icon consistent with the existing result rows.
+                // Apply this after /length truncation so the displayed value is the one swapped.
                 if (ByteOrderHelper.TryByteSwap16(actualValue, out var byteSwappedValue))
                 {
-                    // Preserve the input base so the new row reads naturally beside the
-                    // parsed value: decimal 2 becomes 512, while 0x1234 becomes 0x3412.
-                    // Character literals cannot safely display an arbitrary swapped bit
-                    // pattern as text, so hexadecimal is the unambiguous fallback for them.
+                    // An arbitrary swapped character pattern is safest to display as hexadecimal.
                     var byteSwappedNumberBase = numberParseResult.NumberBase == NumberBase.Char
                         ? NumberBase.Hexadecimal
                         : numberParseResult.NumberBase;
