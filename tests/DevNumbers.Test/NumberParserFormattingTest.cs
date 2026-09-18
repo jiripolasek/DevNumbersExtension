@@ -93,6 +93,7 @@ public class NumberParserFormattingTest
         yield return [new BigInteger(42), NumberBase.Decimal, FormatStyle.Standard, false, false, "42"];
         yield return [new BigInteger(42), NumberBase.Decimal, FormatStyle.CSharpStyle, false, false, "42"];
         yield return [new BigInteger(1000000), NumberBase.Decimal, FormatStyle.CSharpStyle, true, false, "1_000_000"];
+        yield return [new BigInteger(1000000), NumberBase.Decimal, FormatStyle.CppStyle, false, false, "1'000'000"];
         yield return [new BigInteger(42), NumberBase.Decimal, FormatStyle.MultiCharSuffix, false, false, "42dec"];
         yield return [new BigInteger(42), NumberBase.Decimal, FormatStyle.AdaStylePrefix, false, false, "10#42#"];
         yield return [new BigInteger(42), NumberBase.Decimal, FormatStyle.RStylePrefix, false, false, "10r42"];
@@ -102,6 +103,11 @@ public class NumberParserFormattingTest
         yield return [new BigInteger(255), NumberBase.Hexadecimal, FormatStyle.CSharpStyle, false, true, "0xFF"];
         yield return [new BigInteger(255), NumberBase.Hexadecimal, FormatStyle.CStylePrefix, false, false, "0xff"];
         yield return [new BigInteger(255), NumberBase.Hexadecimal, FormatStyle.CppStyle, false, false, "0xff"];
+        yield return [new BigInteger(65535), NumberBase.Hexadecimal, FormatStyle.CppStyle, false, false, "0xffff"];
+        yield return [new BigInteger(65536), NumberBase.Hexadecimal, FormatStyle.CppStyle, false, false, "0x1'0000"];
+        yield return [new BigInteger(2882382797), NumberBase.Hexadecimal, FormatStyle.CppStyle, false, true, "0xABCD'ABCD"];
+        yield return [new BigInteger(65536), NumberBase.Hexadecimal, FormatStyle.CSharpStyle, true, false, "0x_1_0000"];
+        yield return [new BigInteger(65536), NumberBase.Hexadecimal, FormatStyle.CStylePrefix, false, false, "0x10000"];
         yield return [new BigInteger(255), NumberBase.Hexadecimal, FormatStyle.SingleCharSuffix, false, true, "FFh"];
         yield return [new BigInteger(255), NumberBase.Hexadecimal, FormatStyle.MultiCharSuffix, false, false, "ffhex"];
         yield return [new BigInteger(255), NumberBase.Hexadecimal, FormatStyle.SingleCharPrefix, false, false, "hff"];
@@ -114,6 +120,8 @@ public class NumberParserFormattingTest
         // Binary format tests
         yield return [new BigInteger(10), NumberBase.Binary, FormatStyle.CSharpStyle, false, false, "0b1010"];
         yield return [new BigInteger(10), NumberBase.Binary, FormatStyle.CStylePrefix, false, false, "0b1010"];
+        yield return [new BigInteger(15), NumberBase.Binary, FormatStyle.CppStyle, false, false, "0b1111"];
+        yield return [new BigInteger(16), NumberBase.Binary, FormatStyle.CppStyle, false, false, "0b1'0000"];
         yield return [new BigInteger(10), NumberBase.Binary, FormatStyle.MultiCharSuffix, false, false, "1010bin"];
         yield return [new BigInteger(10), NumberBase.Binary, FormatStyle.SpecialCharPrefix, false, false, "%1010"];
         yield return [new BigInteger(10), NumberBase.Binary, FormatStyle.VBStylePrefix, false, false, "&B1010"];
@@ -123,6 +131,7 @@ public class NumberParserFormattingTest
         
         // Octal format tests
         yield return [new BigInteger(42), NumberBase.Octal, FormatStyle.CSharpStyle, false, false, "052"];
+        yield return [new BigInteger(512), NumberBase.Octal, FormatStyle.CppStyle, false, false, "01'000"];
         yield return [new BigInteger(42), NumberBase.Octal, FormatStyle.SingleCharSuffix, false, false, "52o"];
         yield return [new BigInteger(42), NumberBase.Octal, FormatStyle.MultiCharSuffix, false, false, "52oct"];
         yield return [new BigInteger(42), NumberBase.Octal, FormatStyle.SingleCharPrefix, false, false, "o52"];
@@ -156,6 +165,7 @@ public class NumberParserFormattingTest
         // Normal supported format combinations
         yield return [new BigInteger(42), NumberBase.Decimal, FormatStyle.Standard, false, false, "42"];
         yield return [new BigInteger(-42), NumberBase.Decimal, FormatStyle.Standard, false, false, "-42"];
+        yield return [new BigInteger(65536), NumberBase.Hexadecimal, FormatStyle.CppStyle, false, false, "0x1'0000"];
         yield return [new BigInteger(255), NumberBase.Hexadecimal, FormatStyle.CSharpStyle, false, false, "0xff"];
         yield return [new BigInteger(10), NumberBase.Binary, FormatStyle.CSharpStyle, false, false, "0b1010"];
     }
