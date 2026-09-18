@@ -11,6 +11,8 @@ namespace JPSoftworks.DevNumbers.Helpers;
 
 internal static class SwitchParser
 {
+    private const string QuotedLiteralPattern = @"'(?:\\.|[^'\\])*'";
+
     private static readonly SwitchDefinition[] Switches =
     [
         new("length", true),
@@ -33,12 +35,12 @@ internal static class SwitchParser
         ["long"] = 64
     };
 
-    // More precise regex with better boundary detection
-    private static readonly Regex SwitchRegex = new(@"/(?<name>[^\s/:]*?)(?::(?<value>[^\s/]*))?(?=\s|$|/)",
+    // Match quoted literals first so their slashes are not treated as switches.
+    private static readonly Regex SwitchRegex = new(QuotedLiteralPattern + @"|/(?<name>[^\s/:]*?)(?::(?<value>[^\s/]*))?(?=\s|$|/)",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    // Pre-compiled regex for whitespace cleanup
-    private static readonly Regex WhitespaceRegex = new(@"\s+", RegexOptions.Compiled);
+    // Preserve whitespace inside quoted literals during cleanup.
+    private static readonly Regex WhitespaceRegex = new(QuotedLiteralPattern + @"|\s+", RegexOptions.Compiled);
 
     public static ParseResult Parse(string input)
     {
@@ -62,6 +64,11 @@ internal static class SwitchParser
 
         foreach (Match match in matches)
         {
+            if (match.Value[0] == '\'')
+            {
+                continue;
+            }
+
             // Add text before this switch to the query
             if (match.Index > lastIndex)
             {
@@ -81,7 +88,7 @@ internal static class SwitchParser
         }
 
         // Clean up whitespace more efficiently
-        var query = WhitespaceRegex.Replace(queryBuilder.ToString(), " ").Trim();
+        var query = WhitespaceRegex.Replace(queryBuilder.ToString(), static match => match.Value[0] == '\'' ? match.Value : " ").Trim();
 
         return new ParseResult(query, options, errors);
     }
