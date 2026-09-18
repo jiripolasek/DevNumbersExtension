@@ -1,7 +1,7 @@
 ﻿// ------------------------------------------------------------
-// 
+//
 // Copyright (c) Jiří Polášek. All rights reserved.
-// 
+//
 // ------------------------------------------------------------
 
 using JPSoftworks.DevNumbers.Engine.NumberParsers;
@@ -17,7 +17,7 @@ internal sealed partial class FallbackDevNumberItem : FallbackCommandItem
     private readonly NumberBaseConversionPage _page;
     private readonly SettingsManager _settingsManager;
 
-    public FallbackDevNumberItem(ICommand command, string displayTitle, SettingsManager settingsManager) : base(command, displayTitle)
+    public FallbackDevNumberItem(ICommand command, string displayTitle, SettingsManager settingsManager) : base(command, displayTitle, "com.jpsoftworks.cmdpal.devnumbers.conversionFallback")
     {
         this._settingsManager = settingsManager;
         this._page = new NumberBaseConversionPage(settingsManager);
