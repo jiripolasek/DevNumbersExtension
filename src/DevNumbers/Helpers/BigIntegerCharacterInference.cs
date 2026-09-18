@@ -32,6 +32,11 @@ internal static class BigIntegerCharacterInference
         public string Character { get; set; }
 
         /// <summary>
+        /// A display-friendly label that may differ from the actual character text
+        /// </summary>
+        public required string DisplayCharacter { get; set; }
+
+        /// <summary>
         /// Whether this interpretation is valid
         /// </summary>
         public bool IsValid { get; set; }
@@ -47,7 +52,7 @@ internal static class BigIntegerCharacterInference
         /// <returns>Formatted string showing encoding, character, and hex representation</returns>
         public override string ToString()
         {
-            return $"{this.Encoding}: '{this.Character}' ({this.HexRepresentation})";
+            return $"{this.Encoding}: '{this.DisplayCharacter}' ({this.HexRepresentation})";
         }
     }
 
@@ -99,6 +104,7 @@ internal static class BigIntegerCharacterInference
             {
                 Encoding = "UTF-16/UTF-32 (code point)",
                 Character = utf16Result.Character,
+                DisplayCharacter = utf16Result.DisplayCharacter,
                 IsValid = true,
                 HexRepresentation = utf32Result.HexRepresentation // Use UTF-32's more complete hex format
             };
@@ -130,12 +136,7 @@ internal static class BigIntegerCharacterInference
             if (value <= 0)
                 return null;
 
-            byte[] bytes = value.ToByteArray();
-
-            if (bytes.Length > 1 && bytes[^1] == 0)
-                bytes = [.. bytes.Take(bytes.Length - 1)];
-
-            Array.Reverse(bytes);
+            byte[] bytes = value.ToByteArray(isUnsigned: true, isBigEndian: true);
 
             if (bytes.Length <= 1)
                 return null;
@@ -167,7 +168,8 @@ internal static class BigIntegerCharacterInference
             return new CharacterResult
             {
                 Encoding = "ASCII (string)",
-                Character = stringBuilder.ToString(),
+                Character = Encoding.ASCII.GetString(bytes),
+                DisplayCharacter = stringBuilder.ToString(),
                 IsValid = true,
                 HexRepresentation = string.Join(" ", hexBytes)
             };
@@ -196,7 +198,8 @@ internal static class BigIntegerCharacterInference
         return new CharacterResult
         {
             Encoding = "ASCII",
-            Character = character,
+            Character = ((char)asciiValue).ToString(),
+            DisplayCharacter = character,
             IsValid = true,
             HexRepresentation = $"0x{asciiValue:X2}"
         };
@@ -211,15 +214,10 @@ internal static class BigIntegerCharacterInference
     {
         try
         {
-            // Convert BigInteger to byte array (little-endian by default)
-            byte[] bytes = value.ToByteArray();
+            if (value < 0)
+                return null;
 
-            // Remove padding zeros and reverse for big-endian interpretation
-            bytes.Reverse();
-            bytes = [.. bytes.SkipWhile(static b => b == 0).Reverse()];
-
-            if (bytes.Length == 0)
-                bytes = [0];
+            byte[] bytes = value.ToByteArray(isUnsigned: true, isBigEndian: true);
 
             // Try to decode as UTF-8
             string decoded = Encoding.UTF8.GetString(bytes);
@@ -233,6 +231,7 @@ internal static class BigIntegerCharacterInference
             {
                 Encoding = "UTF-8 (bytes)",
                 Character = decoded,
+                DisplayCharacter = decoded,
                 IsValid = true,
                 HexRepresentation = string.Join(" ", bytes.Select(static b => $"0x{b:X2}"))
             };
@@ -269,7 +268,8 @@ internal static class BigIntegerCharacterInference
             return new CharacterResult
             {
                 Encoding = "UTF-16 (code point)",
-                Character = displayCharacter,
+                Character = character,
+                DisplayCharacter = displayCharacter,
                 IsValid = true,
                 HexRepresentation = $"U+{codePoint:X4}"
             };
@@ -304,7 +304,8 @@ internal static class BigIntegerCharacterInference
             return new CharacterResult
             {
                 Encoding = "UTF-32 (code point)",
-                Character = displayCharacter,
+                Character = character,
+                DisplayCharacter = displayCharacter,
                 IsValid = true,
                 HexRepresentation = $"U+{codePoint:X6}"
             };

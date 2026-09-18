@@ -6,7 +6,6 @@
 
 using System.Globalization;
 using System.Numerics;
-using System.Text;
 using JPSoftworks.DevNumbers.Engine;
 using JPSoftworks.DevNumbers.Engine.NumberParsers.Abstraction;
 using JPSoftworks.DevNumbers.Helpers;
@@ -62,7 +61,7 @@ internal sealed partial class ParsedValueListItem : ListItem
             NumberBase.Hexadecimal => BigIntegerBaseConverter.ToString(value, BigIntegerBaseStyle.HexadecimalUppercase),
             NumberBase.Binary => BigIntegerBaseConverter.ToString(value, BigIntegerBaseStyle.Binary),
             NumberBase.Octal => BigIntegerBaseConverter.ToString(value, BigIntegerBaseStyle.Octal),
-            NumberBase.Char => Encoding.UTF8.GetString(value.ToByteArray()),
+            NumberBase.Char => BigIntegerCharacterInference.TryParseAsUtf32(value)?.DisplayCharacter ?? value.ToString(CultureInfo.InvariantCulture),
             _ => value.ToString(CultureInfo.InvariantCulture)
         };
     }

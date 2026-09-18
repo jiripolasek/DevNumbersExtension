@@ -17,6 +17,7 @@
 
 	<ItemGroup>
 		<Using Include="Xunit" />
+		<Compile Include="..\..\src\DevNumbers\Helpers\BigIntegerCharacterInference.cs" Link="Helpers\BigIntegerCharacterInference.cs" />
 	</ItemGroup>
 
 </Project>
