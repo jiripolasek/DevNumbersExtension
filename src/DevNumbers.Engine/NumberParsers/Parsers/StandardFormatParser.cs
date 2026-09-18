@@ -59,7 +59,9 @@ public class StandardFormatParser : NumberParserBase
         result = null;
 
         // First check for implicit hexadecimal (contains A-F)
-        if (input.All(char.IsAsciiHexDigit) && input.Any(CharExtensions.IsHexLetter))
+        // Reserve 0b for binary input, even when its digits are invalid.
+        if (!input.StartsWith("0b", StringComparison.OrdinalIgnoreCase)
+            && input.All(char.IsAsciiHexDigit) && input.Any(CharExtensions.IsHexLetter))
         {
             if (this.TryParseHexadecimal(input, out var hexValue))
             {

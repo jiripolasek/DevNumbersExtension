@@ -12,6 +12,24 @@ namespace JPSoftworks.DevNumbers.Test;
 public partial class BigIntegerBaseConverterTest
 {
     [Theory]
+    [InlineData("", 16, ' ')]
+    [InlineData(" \t ", 2, ' ')]
+    [InlineData("__", 16, '_')]
+    [InlineData("''", 8, '\'')]
+    [InlineData("_ \t _", 2, '_')]
+    [InlineData("-", 10, ' ')]
+    [InlineData("-__", 10, '_')]
+    [InlineData("- \t ", 10, ' ')]
+    public void Parse_WithoutDigits_ThrowsFormatException(string input, int radix, char separator)
+    {
+        var style = new BigIntegerBaseStyle { Radix = radix, GroupSeparator = separator };
+
+        Assert.Throws<FormatException>(() => BigIntegerBaseConverter.Parse(input, style));
+        Assert.False(BigIntegerBaseConverter.TryParse(input, style, out var value));
+        Assert.Equal(BigInteger.Zero, value);
+    }
+
+    [Theory]
     [InlineData(0, "0")]
     [InlineData(42, "42")]
     [InlineData(-42, "-42")]

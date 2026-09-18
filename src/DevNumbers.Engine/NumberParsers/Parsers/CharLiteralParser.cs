@@ -41,6 +41,9 @@ internal class CharLiteralParser : NumberParserBase
         {
             // Skip the backslash for the switch
             char escapeChar = charContent[1];
+            if (charContent.Length != 2 && escapeChar is not ('u' or 'U' or 'x'))
+                return false;
+
             int charValue;
 
             // Handle standard escape sequences
@@ -86,15 +89,13 @@ internal class CharLiteralParser : NumberParserBase
     {
         charValue = 0;
 
-        if (hexDigits.Length < requiredLength)
+        if (hexDigits.Length != requiredLength)
             return false;
 
-        ReadOnlySpan<char> relevantDigits = hexDigits[..requiredLength];
-
-        if (!relevantDigits.ToArray().All(char.IsAsciiHexDigit))
+        if (!hexDigits.ToArray().All(char.IsAsciiHexDigit))
             return false;
 
-        return int.TryParse(relevantDigits.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out charValue);
+        return int.TryParse(hexDigits.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out charValue);
     }
 
     private bool ParseHexEscape(ReadOnlySpan<char> hexDigits, out int charValue)
