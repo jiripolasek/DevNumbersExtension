@@ -4,8 +4,6 @@
 // 
 // ------------------------------------------------------------
 
-using System.Globalization;
-using System.Text;
 using JPSoftworks.DevNumbers.Engine.NumberParsers;
 using JPSoftworks.DevNumbers.Engine.NumberParsers.Abstraction;
 using JPSoftworks.DevNumbers.Helpers;
@@ -17,9 +15,11 @@ namespace JPSoftworks.DevNumbers.Pages;
 internal sealed partial class FallbackDevNumberItem : FallbackCommandItem
 {
     private readonly NumberBaseConversionPage _page;
+    private readonly SettingsManager _settingsManager;
 
     public FallbackDevNumberItem(ICommand command, string displayTitle, SettingsManager settingsManager) : base(command, displayTitle)
     {
+        this._settingsManager = settingsManager;
         this._page = new NumberBaseConversionPage(settingsManager);
         this.Title = ""; // empty to avoid showing the page title in the fallback item
         this._page.Name = "";
@@ -37,29 +37,32 @@ internal sealed partial class FallbackDevNumberItem : FallbackCommandItem
 
         try
         {
-            var result = NumberParser.Parse(query);
-            if (result != null && result.NumberBase != NumberBase.Unknown)
+            var parsedQuery = SwitchParser.Parse(query);
+            var result = NumberQuery.Parse(parsedQuery, this._settingsManager.DefaultFormatStyle);
+            var formatInfo = new FormatInfo(result.FormatStyle);
+            var decimalValue = NumberParser.FormatWithFallback(result.Value, NumberBase.Decimal, formatInfo);
+            var hexadecimalValue = NumberParser.FormatWithFallback(result.Value, NumberBase.Hexadecimal, formatInfo);
+            var binaryValue = NumberParser.FormatWithFallback(result.Value, NumberBase.Binary, formatInfo);
+            var octalValue = NumberParser.FormatWithFallback(result.Value, NumberBase.Octal, formatInfo);
+
+            this._page.Name = "Convert " + query;
+            this.Title = decimalValue;
+            this._page.SearchText = query;
+            this.Subtitle = $"decimal {decimalValue} • hexadecimal {hexadecimalValue} • " +
+                $"binary {binaryValue} • octal {octalValue}";
+            if (parsedQuery.HasErrors)
             {
-                this._page.Name = "Convert " + query;
-                this.Title = result.Value.ToString(CultureInfo.InvariantCulture);
-                this._page.SearchText = result.RawValue;
-
-                var sb = new StringBuilder(64);
-                sb.Append("decimal ").Append(NumberParser.Convert(result, NumberBase.Decimal).RawValue).Append(" • ");
-                sb.Append("hexadecimal ").Append(NumberParser.Convert(result, NumberBase.Hexadecimal).RawValue).Append(" • ");
-                sb.Append("binary ").Append(NumberParser.Convert(result, NumberBase.Binary).RawValue).Append(" • ");
-                sb.Append("octal ").Append(NumberParser.Convert(result, NumberBase.Octal).RawValue);
-                this.Subtitle = sb.ToString();
-
-                this.MoreCommands = [
-                    CommandContextItem(result, NumberBase.Decimal),
-                    CommandContextItem(result, NumberBase.Hexadecimal),
-                    CommandContextItem(result, NumberBase.Binary),
-                    CommandContextItem(result, NumberBase.Octal),
-                ];
-
-                return;
+                this.Subtitle = $"{parsedQuery.Errors[0].Message} • {this.Subtitle}";
             }
+
+            this.MoreCommands = [
+                CommandContextItem(decimalValue, NumberBase.Decimal),
+                CommandContextItem(hexadecimalValue, NumberBase.Hexadecimal),
+                CommandContextItem(binaryValue, NumberBase.Binary),
+                CommandContextItem(octalValue, NumberBase.Octal),
+            ];
+
+            return;
         }
         catch (Exception)
         {
@@ -69,9 +72,8 @@ internal sealed partial class FallbackDevNumberItem : FallbackCommandItem
         SetEmpty();
         return;
 
-        static CommandContextItem CommandContextItem(InputFormatParserResult result, NumberBase baseFormat)
+        static CommandContextItem CommandContextItem(string formattedValue, NumberBase baseFormat)
         {
-            var formattedValue = NumberParser.Convert(result, baseFormat).RawValue;
             var copyTextCommand = new CopyTextCommand(formattedValue) { Name = $"Copy {baseFormat.ToString().ToLowerInvariant()}" };
             return new CommandContextItem(copyTextCommand) { Title = $"{baseFormat}: {formattedValue}" };
         }

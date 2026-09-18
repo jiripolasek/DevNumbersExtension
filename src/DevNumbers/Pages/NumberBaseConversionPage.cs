@@ -6,7 +6,6 @@
 
 using JPSoftworks.CommandPalette.Extensions.Toolkit.Logging;
 using JPSoftworks.DevNumbers.Engine;
-using JPSoftworks.DevNumbers.Engine.NumberParsers;
 using JPSoftworks.DevNumbers.Engine.NumberParsers.Abstraction;
 using JPSoftworks.DevNumbers.Helpers;
 using JPSoftworks.DevNumbers.Resources;
@@ -53,7 +52,8 @@ internal sealed partial class NumberBaseConversionPage : DynamicListPage
             // parse out switches and options out of newSearch
             queryParseResult = SwitchParser.Parse(newSearch);
 
-            numberParseResult = NumberParser.Parse(queryParseResult.Query);
+            var numberQuery = NumberQuery.Parse(queryParseResult, this._settingsManager.DefaultFormatStyle);
+            numberParseResult = numberQuery.Number;
 
             if (numberParseResult == null || numberParseResult.NumberBase == NumberBase.Unknown)
             {
@@ -62,27 +62,8 @@ internal sealed partial class NumberBaseConversionPage : DynamicListPage
             else
             {
                 var explicitBitLength = queryParseResult.Options.BitLength;
-                var actualBitLength = queryParseResult.Options.BitLength;
-                var actualValue = numberParseResult.Value;
-
-                // a) if bit length is specified, then we apply it to the parsed input:
-                // - if input bit-size is bigger that bit length, then be have to fail
-                // b) if not specified
-                // b.1) if input is negative, then let's automatically determine the best bit length
-                // b.2) if input is positive, let's don't care about bit length
-                if (explicitBitLength > -1)
-                {
-                    actualBitLength = explicitBitLength;
-                    actualValue = numberParseResult.Value.TrimToBitLength(actualBitLength);
-                }
-                else
-                {
-                    if (actualValue < 0)
-                    {
-                        actualBitLength = actualValue.GetNearestContainerBitLength(true);
-                    }
-                    // if input is positive, then we don't care about bit length
-                }
+                var actualBitLength = numberQuery.BitLength;
+                var actualValue = numberQuery.Value;
 
                 // What to show to the user:
                 // 1) Value as returned by parser
@@ -95,7 +76,7 @@ internal sealed partial class NumberBaseConversionPage : DynamicListPage
                 // 7) Octal
                 // 8) Char (if applicable)
 
-                var targetStyle = this._settingsManager.DefaultFormatStyle ?? numberParseResult.FormatInfo.Style;
+                var targetStyle = numberQuery.FormatStyle;
 
                 List<IListItem> results =
                 [

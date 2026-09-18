@@ -19,6 +19,7 @@
 		<Using Include="Xunit" />
 		<Compile Include="..\..\src\DevNumbers\Helpers\BigIntegerCharacterInference.cs" Link="Helpers\BigIntegerCharacterInference.cs" />
 		<Compile Include="..\..\src\DevNumbers\Helpers\SwitchParser.cs" Link="Helpers\SwitchParser.cs" />
+		<Compile Include="..\..\src\DevNumbers\Helpers\NumberQuery.cs" Link="Helpers\NumberQuery.cs" />
 	</ItemGroup>
 
 </Project>
