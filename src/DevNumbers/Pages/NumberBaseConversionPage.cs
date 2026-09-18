@@ -150,7 +150,7 @@ internal sealed partial class NumberBaseConversionPage : DynamicListPage
         var targetStyle = numberQuery.FormatStyle;
 
         results.Add(new ParsedValueListItem(numberParseResult, explicitBitLength));
-        results.AddRange([.. this.AddDidYouMean(numberParseResult)]);
+        results.AddRange(this.AddDidYouMean(numberParseResult));
         results.Add(new NumericValueListItem(actualValue, NumberBase.Decimal, Strings.NumberBase_DecimalLabel!, targetStyle));
 
         AddExtraDecimalEntry(numberParseResult, actualValue, actualBitLength, results, targetStyle);
@@ -204,11 +204,9 @@ internal sealed partial class NumberBaseConversionPage : DynamicListPage
 
     private static void AddPower2NumberBases(List<IListItem> results, BigInteger actualValue, FormatStyle targetStyle)
     {
-        results.AddRange([
-            new NumericValueListItem(actualValue, NumberBase.Hexadecimal, Strings.NumberBase_Hexadecimal!, targetStyle),
-            new NumericValueListItem(actualValue, NumberBase.Binary, Strings.NumberBase_Binary!, targetStyle),
-            new NumericValueListItem(actualValue, NumberBase.Octal, Strings.NumberBase_Octal!, targetStyle)
-        ]);
+        results.Add(new NumericValueListItem(actualValue, NumberBase.Hexadecimal, Strings.NumberBase_Hexadecimal!, targetStyle));
+        results.Add(new NumericValueListItem(actualValue, NumberBase.Binary, Strings.NumberBase_Binary!, targetStyle));
+        results.Add(new NumericValueListItem(actualValue, NumberBase.Octal, Strings.NumberBase_Octal!, targetStyle));
     }
 
     private static void TryToAddCharacterInterpretations(BigInteger actualValue, List<IListItem> results)
@@ -236,7 +234,7 @@ internal sealed partial class NumberBaseConversionPage : DynamicListPage
         }
     }
 
-    private IEnumerable<IListItem> AddDidYouMean(InputFormatParserResult parsedInput)
+    private IListItem[] AddDidYouMean(InputFormatParserResult parsedInput)
     {
         return parsedInput.NumberBase == NumberBase.Decimal && parsedInput.RawValue.All(static c => c is '1' or '0')
             ? [new DidYouMeanBinaryListItem(parsedInput.RawValue, parsedInput.NumberBase, this)]

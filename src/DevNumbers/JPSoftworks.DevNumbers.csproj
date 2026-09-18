@@ -5,8 +5,8 @@
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<AppxManifest>$(ProjectDir)Package.appxmanifest</AppxManifest>
 
-		<WindowsSdkPackageVersion>10.0.22621.57</WindowsSdkPackageVersion>
-		<TargetFramework>net9.0-windows10.0.22621.0</TargetFramework>
+		<WindowsSdkPackageVersion>10.0.26100.38</WindowsSdkPackageVersion>
+		<TargetFramework>net10.0-windows10.0.22621.0</TargetFramework>
 		<TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
 		<RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
@@ -53,7 +53,6 @@
 		<PackageReference Include="Microsoft.CommandPalette.Extensions" />
 		<PackageReference Include="Microsoft.Windows.CsWinRT" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" />
-		<PackageReference Include="Microsoft.Web.WebView2" />
 		<PackageReference Include="System.Text.Json" />
 		<PackageReference Include="Shmuelie.WinRTServer" />
 		<PackageReference Include="Unicode.net" />
@@ -93,7 +92,20 @@
 		<HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
 	</PropertyGroup>
 
-	<PropertyGroup Condition=" '$(Configuration)' != 'Debug' ">
+	<PropertyGroup>
+		<EnableCmdPalAOT Condition="'$(EnableCmdPalAOT)' == '' and '$(Configuration)' == 'Release'">true</EnableCmdPalAOT>
+	</PropertyGroup>
+
+	<!-- Uncomment to enable AOT and local packaging in any configuration. -->
+	<!-- <PropertyGroup>
+		<EnableCmdPalAOT>true</EnableCmdPalAOT>
+		<GeneratePackageLocally>true</GeneratePackageLocally>
+	</PropertyGroup> -->
+
+	<PropertyGroup Condition="'$(EnableCmdPalAOT)' == 'true'">
+		<PublishAot>true</PublishAot>
+		<SelfContained>true</SelfContained>
+		<DisableRuntimeMarshalling>false</DisableRuntimeMarshalling>
 		<IsAotCompatible>true</IsAotCompatible>
 		<CsWinRTAotOptimizerEnabled>true</CsWinRTAotOptimizerEnabled>
 		<CsWinRTAotWarningLevel>2</CsWinRTAotWarningLevel>
@@ -101,7 +113,12 @@
 		<WarningsNotAsErrors>IL2081</WarningsNotAsErrors>
 
 		<PublishTrimmed>true</PublishTrimmed>
-		<PublishSingleFile>true</PublishSingleFile>
+		<PublishSingleFile>false</PublishSingleFile>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(GeneratePackageLocally)' == 'true'">
+		<GenerateAppxPackageOnBuild>true</GenerateAppxPackageOnBuild>
+		<AppxBundle>Never</AppxBundle>
 	</PropertyGroup>
 
 	<Target Name="UpdateVersionFromManifest" BeforeTargets="BeforeBuild">
