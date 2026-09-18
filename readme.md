@@ -11,6 +11,8 @@ This extension allows you to display and calculate various numerical values usin
 
 Conversion between various number systems (decimal, hexadecimal, octal, binary).
 
+16-bit byte-swapped output for values represented by two bytes.
+
 Automatic detection of common format patterns:
   - C style (e.g., `0x1A3F`)
   - C++ style (with apostrophe digit group separator; e.g., `0x123'ABCD`)

@@ -147,6 +147,21 @@ internal sealed partial class NumberBaseConversionPage : DynamicListPage
                     new NumericValueListItem(actualValue, NumberBase.Octal, Strings.NumberBase_Octal!, targetStyle)
                 ]);
 
+                // Apply this after /length truncation so the displayed value is the one swapped.
+                if (ByteOrderHelper.TryByteSwap16(actualValue, out var byteSwappedValue))
+                {
+                    // An arbitrary swapped character pattern is safest to display as hexadecimal.
+                    var byteSwappedNumberBase = numberParseResult.NumberBase == NumberBase.Char
+                        ? NumberBase.Hexadecimal
+                        : numberParseResult.NumberBase;
+
+                    results.Add(new NumericValueListItem(
+                        byteSwappedValue,
+                        byteSwappedNumberBase,
+                        Strings.NumberBase_ByteSwapped16Bit!,
+                        targetStyle));
+                }
+
                 // Let's try to interpret the value as a character or string if applicable
                 // Not really primary goal of this page, but still useful 
                 try

@@ -95,6 +95,15 @@ namespace JPSoftworks.DevNumbers.Resources {
                 return ResourceManager.GetString("NumberBase_Binary", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Byte swapped (16-bit).
+        /// </summary>
+        internal static string NumberBase_ByteSwapped16Bit {
+            get {
+                return ResourceManager.GetString("NumberBase_ByteSwapped16Bit", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to character.
