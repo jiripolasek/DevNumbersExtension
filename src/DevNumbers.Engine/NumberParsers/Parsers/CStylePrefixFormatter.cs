@@ -55,7 +55,7 @@ internal abstract class CStylePrefixFormatterBase : NumberFormatterBase
         string baseValue = ConvertToBase(value, style);
         string prefix = this.GetDefaultAffix(format);
 
-        if (baseValue.Length > style.GroupSize && this.GroupSeparator != (char)0 && !string.IsNullOrWhiteSpace(prefix))
+        if (this.SupportedStyle == FormatStyle.CSharpStyle && baseValue.Length > style.GroupSize && !string.IsNullOrWhiteSpace(prefix))
         {
             prefix += this.GroupSeparator;
         }
