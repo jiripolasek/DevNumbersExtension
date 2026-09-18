@@ -171,7 +171,7 @@ internal sealed partial class NumberBaseConversionPage : DynamicListPage
                    {
                        results.Add(new ListItem
                        {
-                           Title = characterResult.Character,
+                           Title = characterResult.DisplayCharacter,
                            Subtitle = $"{(characterResult.Character.Length > 1 ? "string" : "character")} • {characterResult.Encoding} • {characterResult.HexRepresentation}",
                            Icon = Icons.Characters,
                            Command = new CopyTextCommand(characterResult.Character)
