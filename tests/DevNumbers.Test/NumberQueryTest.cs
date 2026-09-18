@@ -21,6 +21,10 @@ public class NumberQueryTest
     [InlineData("0x100 /length:8", 256, 0, 8)]
     [InlineData("0x1'0000 /length:word", 65536, 0, 16)]
     [InlineData("'/' /length:8", 47, 47, 8)]
+    [InlineData("' ' /length:8", 32, 32, 8)]
+    [InlineData("'U+0041' /length:8", 65, 65, 8)]
+    [InlineData("'U-0041' /length:8", 65, 65, 8)]
+    [InlineData("'\U0001F600' /length:16", 0x1F600, 0xF600, 16)]
     [InlineData("-128", -128, -128, 8)]
     [InlineData("-129", -129, -129, 16)]
     [InlineData("255", 255, 255, -1)]
@@ -54,6 +58,7 @@ public class NumberQueryTest
     [InlineData("0xFF /length:8", null, NumberBase.Hexadecimal, "0xFF")]
     [InlineData("0x1FF /length:8", FormatStyle.CppStyle, NumberBase.Hexadecimal, "0xFF")]
     [InlineData("65536", FormatStyle.CppStyle, NumberBase.Hexadecimal, "0x1'0000")]
+    [InlineData("65536", FormatStyle.CStylePrefix, NumberBase.Hexadecimal, "0x10000")]
     [InlineData("0xFF /length:8", FormatStyle.VBStylePrefix, NumberBase.Hexadecimal, "&HFF")]
     [InlineData("0xFF /length:8", FormatStyle.VBStylePrefix, NumberBase.Decimal, "255")]
     [InlineData("255", FormatStyle.SingleCharPrefix, NumberBase.Binary, "1111 1111")]
@@ -89,6 +94,9 @@ public class NumberQueryTest
     [Theory]
     [InlineData("0b102 /length:8")]
     [InlineData("hex /length:8")]
+    [InlineData("'AB' /length:8")]
+    [InlineData("'\\u0041XYZ' /length:8")]
+    [InlineData("'U+0041XYZ' /length:8")]
     public void Parse_InvalidNumber_ThrowsFormatException(string input)
     {
         Assert.Throws<FormatException>(() => NumberQuery.Parse(SwitchParser.Parse(input), null));

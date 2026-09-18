@@ -28,17 +28,25 @@ internal sealed partial class NumericValueListItem : ListItem
     {
         this.Title = NumberParser.FormatWithFallback(value, numberBase, new FormatInfo(formatStyle));
         this.Subtitle = subtitle;
-        this.Command = new CopyTextCommand(this.Title);
+        this.Command = new CopyTextCommand(this.Title) { Name = string.Format(CultureInfo.CurrentCulture, CopyCommandTitleFormat, FormatStyleHelper.FormatStyleToString(formatStyle)) };
         this.Icon = GetIcon(numberBase);
-        
+
         HashSet<string> tempSet = [];
         this.MoreCommands =
         [
-            .. from item in NumberParser.GetSupportedStyles(numberBase)
-               select FormatValue(value, numberBase, item)
-               into formatValue
-               where tempSet.Add(formatValue)
-               select new CommandContextItem(new CopyTextCommand(formatValue)) { Title = string.Format(CultureInfo.CurrentUICulture, CopyCommandTitleFormat, formatValue) }
+            .. from style in NumberParser.GetSupportedStyles(numberBase)
+               where style != formatStyle
+               let formattedValue = FormatValue(value, numberBase, style)
+               select new
+               {
+                   FormattedValue = formattedValue,
+                   Style = style,
+                   CopyName = string.Format(CultureInfo.CurrentCulture, CopyCommandTitleFormat, FormatStyleHelper.FormatStyleToString(style)),
+                   CopyValue = string.Format(CultureInfo.CurrentUICulture, CopyCommandTitleFormat, formattedValue)
+               }
+               into menuItemModel
+               where tempSet.Add(menuItemModel.FormattedValue)
+               select new CommandContextItem(new CopyTextCommand(menuItemModel.FormattedValue) { Name = menuItemModel.CopyName } ) { Title = menuItemModel.CopyValue }
         ];
     }
 

@@ -89,6 +89,24 @@ namespace JPSoftworks.DevNumbers.Test
             Assert.Equal(NumberBase.Char, result.NumberBase);
             Assert.Equal(expectedValue, result.Value);
             Assert.Equal(FormatStyle.CharLiteral, result.FormatInfo.Style);
+
+            Assert.True(NumberParser.TryParse(input, out var tryParseResult));
+            Assert.NotNull(tryParseResult);
+            Assert.Equal(result, tryParseResult);
+        }
+
+        [Theory]
+        [InlineData("0x AB CD", 0xABCD)]
+        [InlineData("1 234", 1234)]
+        [InlineData("0b 1010 0101", 0xA5)]
+        public void Parse_WhitespaceSeparatedNumber_PreservesDigitGrouping(string input, int expectedValue)
+        {
+            var result = NumberParser.Parse(input);
+
+            Assert.NotNull(result);
+            Assert.Equal(new BigInteger(expectedValue), result.Value);
+            Assert.True(NumberParser.TryParse(input, out var tryParseResult));
+            Assert.Equal(result, tryParseResult);
         }
 
         [Theory]
@@ -144,10 +162,18 @@ namespace JPSoftworks.DevNumbers.Test
         [InlineData("'\\U00000041XYZ'")]
         [InlineData("'\\U000000410'")]
         [InlineData("'\\x41XYZ'")]
+        [InlineData("'AB'")]
+        [InlineData("'A B'")]
+        [InlineData("' A'")]
+        [InlineData("'\\q'")]
+        [InlineData("'U+0041XYZ'")]
+        [InlineData("'U-0041XYZ'")]
+        [InlineData("'\U0001F600A'")]
         public void Parse_InvalidInput_ThrowsFormatException(string input)
         {
             // Act & Assert
             Assert.Throws<FormatException>(() => NumberParser.Parse(input));
+            Assert.False(NumberParser.TryParse(input, out _));
         }
 
         public static IEnumerable<object[]> GetNumberFormatTestData()
@@ -257,6 +283,15 @@ namespace JPSoftworks.DevNumbers.Test
             yield return ["'\\u0041'", new BigInteger(65)];
             yield return ["'\\U00000041'", new BigInteger(65)];
             yield return ["'\\x41'", new BigInteger(65)];
+            yield return ["' '", new BigInteger(32)];
+            yield return ["'\t'", new BigInteger(9)];
+            yield return ["'\u00A0'", new BigInteger(160)];
+            yield return ["'U+0041'", new BigInteger(65)];
+            yield return ["'U-0041'", new BigInteger(65)];
+            yield return ["'U+1F600'", new BigInteger(0x1F600)];
+            yield return ["'U-1F600'", new BigInteger(0x1F600)];
+            yield return ["'\\U0001F600'", new BigInteger(0x1F600)];
+            yield return ["'\U0001F600'", new BigInteger(0x1F600)];
         }
     }
 }

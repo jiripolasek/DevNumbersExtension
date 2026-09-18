@@ -1,5 +1,13 @@
-﻿using System.Globalization;
+﻿// ------------------------------------------------------------
+//
+// Copyright (c) Jiří Polášek. All rights reserved.
+//
+// ------------------------------------------------------------
+
+using System.Globalization;
 using System.Numerics;
+using System.Linq;
+using System.Text;
 using JPSoftworks.DevNumbers.Engine.NumberParsers.Abstraction;
 
 namespace JPSoftworks.DevNumbers.Engine.NumberParsers.Parsers;
@@ -15,66 +23,101 @@ internal class CharLiteralParser : NumberParserBase
     {
         result = null;
 
-        // Check for valid character literal format: 'char'
         if (input.Length < 3 || input[0] != '\'' || input[^1] != '\'')
             return false;
 
-        // Extract the character content (excluding the quotes)
-        ReadOnlySpan<char> charContent = input.AsSpan(1, input.Length - 2);
-
-        // Handle simple character
-        if (charContent.Length == 1)
+        var charContent = input.AsSpan(1, input.Length - 2);
+        
+        switch (charContent.Length)
         {
-            BigInteger charValue = new BigInteger(charContent[0]);
-            result = new InputFormatParserResult(
-                input,
-                NumberBase.Char,
-                charValue,
-                false,
-                new FormatInfo(FormatStyle.CharLiteral)
-            );
-            return true;
+            case 1:
+                {
+                    var charValue = new BigInteger(charContent[0]);
+                    result = new InputFormatParserResult(
+                        input,
+                        NumberBase.Char,
+                        charValue,
+                        false,
+                        new FormatInfo(FormatStyle.CharLiteral)
+                    );
+                    return true;
+                }
+
+            case >= 2 when charContent[0] == '\\':
+                {
+                    // Skip the backslash for the switch
+                    var escapeChar = charContent[1];
+                    if (charContent.Length != 2 && escapeChar is not ('u' or 'U' or 'x'))
+                        return false;
+
+                    int charValue;
+
+                    // Handle standard escape sequences
+                    charValue = escapeChar switch
+                    {
+                        '\'' => '\'',  // Single quote
+                        '"' => '"',    // Double quote
+                        '\\' => '\\',  // Backslash
+                        '0' => '\0',   // Null
+                        'a' => '\a',   // Alert (bell)
+                        'b' => '\b',   // Backspace
+                        'f' => '\f',   // Form feed
+                        'n' => '\n',   // New line
+                        'r' => '\r',   // Carriage return
+                        't' => '\t',   // Horizontal tab
+                        'v' => '\v',   // Vertical tab
+
+                        // Handle Unicode and hex escape sequences
+                        'u' => ParseUnicodeEscape(charContent[2..], 4, out charValue) ? charValue : -1, // C# Unicode escape
+                        'U' => ParseUnicodeEscape(charContent[2..], 8, out charValue) ? charValue : -1, // Python-style Unicode escape
+                        'x' => ParseHexEscape(charContent[2..], out charValue) ? charValue : -1, // Hex escape sequence
+
+                        _ => -1 // Invalid escape sequence
+                    };
+
+                    if (charValue != -1)
+                    {
+                        result = new InputFormatParserResult(
+                            input,
+                            NumberBase.Char,
+                            new BigInteger(charValue),
+                            false,
+                            new FormatInfo(FormatStyle.CharLiteral)
+                        );
+                        return true;
+                    }
+
+                    break;
+                }
+
+            case >= 6 when charContent.StartsWith("U+"): // Unicode codepoint
+            case >= 6 when charContent.StartsWith("U-"): // historical notation
+                {
+                    var hexDigits = charContent[2..];
+                    if (ParseVariableUnicodeEscape(hexDigits, 4, out var charValue))
+                    {
+                        result = new InputFormatParserResult(
+                            input,
+                            NumberBase.Char,
+                            new BigInteger(charValue),
+                            false,
+                            new FormatInfo(FormatStyle.CharLiteral)
+                        );
+                        return true;
+                    }
+
+                    break;
+                }
         }
 
-        // Handle escape sequences
-        if (charContent.Length >= 2 && charContent[0] == '\\')
+        if (Rune.TryGetRuneAt(input, 1, out var rune) && rune.Utf16SequenceLength == charContent.Length)
         {
-            // Skip the backslash for the switch
-            char escapeChar = charContent[1];
-            if (charContent.Length != 2 && escapeChar is not ('u' or 'U' or 'x'))
-                return false;
-
-            int charValue;
-
-            // Handle standard escape sequences
-            charValue = escapeChar switch
-            {
-                '\'' => '\'',  // Single quote
-                '"' => '"',    // Double quote
-                '\\' => '\\',  // Backslash
-                '0' => '\0',   // Null
-                'a' => '\a',   // Alert (bell)
-                'b' => '\b',   // Backspace
-                'f' => '\f',   // Form feed
-                'n' => '\n',   // New line
-                'r' => '\r',   // Carriage return
-                't' => '\t',   // Horizontal tab
-                'v' => '\v',   // Vertical tab
-
-                // Handle Unicode and hex escape sequences
-                'u' => this.ParseUnicodeEscape(charContent[2..], 4, out charValue) ? charValue : -1,
-                'U' => this.ParseUnicodeEscape(charContent[2..], 8, out charValue) ? charValue : -1,
-                'x' => this.ParseHexEscape(charContent[2..], out charValue) ? charValue : -1,
-
-                _ => -1 // Invalid escape sequence
-            };
-
-            if (charValue != -1)
+            if (rune.Value is < 0xD800 or > 0xDFFF) // Exclude surrogate pairs
             {
                 result = new InputFormatParserResult(
                     input,
                     NumberBase.Char,
-                    new BigInteger(charValue),
+                    new BigInteger(rune.Value),
                     false,
                     new FormatInfo(FormatStyle.CharLiteral)
                 );
@@ -85,7 +128,7 @@ internal class CharLiteralParser : NumberParserBase
         return false;
     }
 
-    private bool ParseUnicodeEscape(ReadOnlySpan<char> hexDigits, int requiredLength, out int charValue)
+    private static bool ParseUnicodeEscape(ReadOnlySpan<char> hexDigits, int requiredLength, out int charValue)
     {
         charValue = 0;
 
@@ -98,7 +141,20 @@ internal class CharLiteralParser : NumberParserBase
         return int.TryParse(hexDigits.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out charValue);
     }
 
-    private bool ParseHexEscape(ReadOnlySpan<char> hexDigits, out int charValue)
+    private static bool ParseVariableUnicodeEscape(ReadOnlySpan<char> hexDigits, int requiredMinLength, out int charValue)
+    {
+        charValue = 0;
+
+        if (hexDigits.Length < requiredMinLength)
+            return false;
+
+        if (!hexDigits.ToArray().All(char.IsAsciiHexDigit))
+            return false;
+
+        return int.TryParse(hexDigits.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out charValue);
+    }
+
+    private static bool ParseHexEscape(ReadOnlySpan<char> hexDigits, out int charValue)
     {
         charValue = 0;
 

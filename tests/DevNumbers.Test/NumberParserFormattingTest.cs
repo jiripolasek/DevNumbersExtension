@@ -11,7 +11,7 @@ using JPSoftworks.DevNumbers.Engine.NumberParsers.Abstraction;
 namespace JPSoftworks.DevNumbers.Test;
 
 /// <summary>
-/// Tests for the NumberParser.Format and NumberParser.Format2 methods
+/// Tests for the NumberParser.Format and NumberParser.FormatWithFallback methods
 /// </summary>
 public class NumberParserFormattingTest
 {
@@ -50,8 +50,8 @@ public class NumberParserFormattingTest
     }
     
     [Theory]
-    [MemberData(nameof(GetFormat2TestData))]
-    public void Format2_InputValueBaseAndStyle_ReturnsCorrectlyFormattedString(
+    [MemberData(nameof(GetFormatWithFallbackTestData))]
+    public void FormatWithFallback_InputValueBaseAndStyle_ReturnsCorrectlyFormattedString(
         BigInteger value, 
         NumberBase numberBase, 
         FormatStyle formatStyle, 
@@ -70,8 +70,8 @@ public class NumberParserFormattingTest
     }
 
     [Theory]
-    [MemberData(nameof(GetFormat2FallbackTestData))]
-    public void Format2_UnsupportedFormatStyle_FallsBackToStandard(
+    [MemberData(nameof(GetFormatWithFallbackFallbackTestData))]
+    public void FormatWithFallback_UnsupportedFormatStyle_FallsBackToStandard(
         BigInteger value,
         NumberBase numberBase,
         FormatStyle formatStyle,
@@ -160,7 +160,7 @@ public class NumberParserFormattingTest
         yield return [new BigInteger(42), NumberBase.Decimal, FormatStyle.SingleCharSuffix];
     }
 
-    public static IEnumerable<object[]> GetFormat2TestData()
+    public static IEnumerable<object[]> GetFormatWithFallbackTestData()
     {
         // Normal supported format combinations
         yield return [new BigInteger(42), NumberBase.Decimal, FormatStyle.Standard, false, false, "42"];
@@ -170,10 +170,9 @@ public class NumberParserFormattingTest
         yield return [new BigInteger(10), NumberBase.Binary, FormatStyle.CSharpStyle, false, false, "0b1010"];
     }
 
-    public static IEnumerable<object[]> GetFormat2FallbackTestData()
+    public static IEnumerable<object[]> GetFormatWithFallbackFallbackTestData()
     {
-        // Character literals trying to use other styles should fall back to standard
-        yield return [new BigInteger(65), NumberBase.Char, FormatStyle.Standard, "65"];
+        yield return [new BigInteger(65), NumberBase.Char, FormatStyle.Standard, "'A'"];
 
         // Unsupported format style combinations that should fall back to standard
         yield return [new BigInteger(42), NumberBase.Decimal, FormatStyle.SingleCharPrefix, "42"];

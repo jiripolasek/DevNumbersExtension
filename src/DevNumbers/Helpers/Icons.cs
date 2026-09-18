@@ -33,9 +33,11 @@ public static class Icons
 
     public static IconInfo Warning { get; } = new("\uE7BA");
 
-    public static IconInfo Help { get; } = new("\uE9CE");
+    public static IconInfo Info { get; } = new("\uE946");
 
     public static IconInfo InfoSolid { get; } = new("\uF167");
+
+    public static IconInfo Help { get; } = new("\uE9CE");
 
     public static IconInfo Dial2 { get; } = new("\uF147");
     public static IconInfo Dial8 { get; } = new("\uF14D");

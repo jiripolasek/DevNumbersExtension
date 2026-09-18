@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Text;
 using JPSoftworks.DevNumbers.Engine.NumberParsers.Abstraction;
 
 namespace JPSoftworks.DevNumbers.Engine.NumberParsers.Parsers;
@@ -23,10 +24,21 @@ internal class CharLiteralFormatter : NumberFormatterBase
     public override string Format(BigInteger value, NumberBase format, FormatInfo formatInfo)
     {
         // Must be a character value
-        if (format != NumberBase.Char || value < 0 || value > char.MaxValue)
+        if (format != NumberBase.Char || value < 0)
             throw new ArgumentException("Value is not a valid character.");
 
-        // Format as character with appropriate escaping
-        return "'" + FormatChar((int)value) + "'";
+        if (value < char.MaxValue)
+        {
+            return $"'{FormatChar((int)value)}'";
+        }
+        else if(value < int.MaxValue)
+        {
+            var codePoint = (int)value;
+            return $"'{char.ConvertFromUtf32(codePoint)}'";
+        }
+        else
+        {
+            throw new ArgumentException("Value is outside the valid range for a character.");
+        }
     }
 }

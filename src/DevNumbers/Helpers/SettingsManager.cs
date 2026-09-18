@@ -21,6 +21,7 @@ public sealed class SettingsManager : JsonSettingsManager
         new(Strings.StyleName_Standard!, FormatStyle.Standard.ToString("D")),
         new(Strings.StyleName_CSharp!, FormatStyle.CSharpStyle.ToString("D")),
         new(Strings.StyleName_CppStyle!, FormatStyle.CppStyle.ToString("D")),
+        new(Strings.StyleName_CStyle!, FormatStyle.CStylePrefix.ToString("D")),
         new(Strings.StyleName_VBStyle!, FormatStyle.VBStylePrefix.ToString("D")),
         new(Strings.StyleName_AdaStyle!, FormatStyle.AdaStylePrefix.ToString("D")),
         new(Strings.StyleName_RStyle!, FormatStyle.RStylePrefix.ToString("D")),
@@ -32,8 +33,8 @@ public sealed class SettingsManager : JsonSettingsManager
 
     private readonly ChoiceSetSetting _defaultFormatStyle = new(
         Namespaced(nameof(DefaultFormatStyle)),
-        Strings.Setting_DefaultFormattingStyle_Title!,
-        Strings.Setting_DefaultFormattingStyle_Subtitle!,
+        Strings.Setting_DefaultFormattingStyle_Label!,
+        Strings.Setting_DefaultFormattingStyle_Description!,
         DefaultFormatStyleOptions);
 
     public FormatStyle? DefaultFormatStyle
