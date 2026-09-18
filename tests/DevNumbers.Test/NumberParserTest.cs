@@ -114,6 +114,36 @@ namespace JPSoftworks.DevNumbers.Test
         [InlineData("not a number")]
         [InlineData("text123")]
         [InlineData("abc!@#")]
+        [InlineData("0b102")]
+        [InlineData("0B102")]
+        [InlineData("0b")]
+        [InlineData("0b10dec")]
+        [InlineData("0x_")]
+        [InlineData("0b_")]
+        [InlineData("0x'")]
+        [InlineData("-")]
+        [InlineData("-_")]
+        [InlineData("- \t_")]
+        [InlineData("hex")]
+        [InlineData("hexadecimal")]
+        [InlineData("bin")]
+        [InlineData("binary")]
+        [InlineData("oct")]
+        [InlineData("octal")]
+        [InlineData("decimal")]
+        [InlineData("16#FF#junk")]
+        [InlineData("2#10#junk")]
+        [InlineData("8#77#junk")]
+        [InlineData("10#42#junk")]
+        [InlineData("16#FF##")]
+        [InlineData("'\\nXYZ'")]
+        [InlineData("'\\0XYZ'")]
+        [InlineData("'\\\\XYZ'")]
+        [InlineData("'\\u0041XYZ'")]
+        [InlineData("'\\u00410'")]
+        [InlineData("'\\U00000041XYZ'")]
+        [InlineData("'\\U000000410'")]
+        [InlineData("'\\x41XYZ'")]
         public void Parse_InvalidInput_ThrowsFormatException(string input)
         {
             // Act & Assert
@@ -128,12 +158,21 @@ namespace JPSoftworks.DevNumbers.Test
             yield return ["0b1010", NumberBase.Binary, new BigInteger(10), FormatStyle.CSharpStyle];
             yield return ["052", NumberBase.Octal, new BigInteger(42), FormatStyle.CSharpStyle];
             yield return ["'A'", NumberBase.Char, new BigInteger(65), FormatStyle.CharLiteral];
+            yield return ["0", NumberBase.Decimal, BigInteger.Zero, FormatStyle.Standard];
+            yield return ["-0", NumberBase.Decimal, BigInteger.Zero, FormatStyle.Standard];
+            yield return ["0x_0", NumberBase.Hexadecimal, BigInteger.Zero, FormatStyle.CSharpStyle];
+            yield return ["0b_0", NumberBase.Binary, BigInteger.Zero, FormatStyle.CSharpStyle];
+            yield return ["0hex", NumberBase.Hexadecimal, BigInteger.Zero, FormatStyle.MultiCharSuffix];
+            yield return ["0bin", NumberBase.Binary, BigInteger.Zero, FormatStyle.MultiCharSuffix];
+            yield return ["FF", NumberBase.Hexadecimal, new BigInteger(255), FormatStyle.Standard];
         }
 
         public static IEnumerable<object[]> GetBinaryFormatsTestData()
         {
             // Binary format testing with all supported styles
             yield return ["0b1010", new BigInteger(10), FormatStyle.CSharpStyle];
+            yield return ["0B1010", new BigInteger(10), FormatStyle.CSharpStyle];
+            yield return ["0b10'10", new BigInteger(10), FormatStyle.CppStyle];
             yield return ["1010bin", new BigInteger(10), FormatStyle.MultiCharSuffix];
             yield return ["1010binary", new BigInteger(10), FormatStyle.MultiCharSuffix];
             yield return ["%1010", new BigInteger(10), FormatStyle.SpecialCharPrefix];
@@ -160,6 +199,8 @@ namespace JPSoftworks.DevNumbers.Test
             yield return ["$FF", new BigInteger(255), FormatStyle.SpecialCharPrefix];
             yield return ["&HFF", new BigInteger(255), FormatStyle.VBStylePrefix];
             yield return ["16#FF#", new BigInteger(255), FormatStyle.AdaStylePrefix];
+            yield return ["16#FF", new BigInteger(255), FormatStyle.AdaStylePrefix];
+            yield return [" 16#FF# ", new BigInteger(255), FormatStyle.AdaStylePrefix];
             yield return ["16rFF", new BigInteger(255), FormatStyle.RStylePrefix];
             
             // Test uppercase/lowercase variations
@@ -213,6 +254,9 @@ namespace JPSoftworks.DevNumbers.Test
             yield return ["'\\''", new BigInteger(39)]; // Single quote
             yield return ["'\\\"'", new BigInteger(34)]; // Double quote
             yield return ["'\\\\'", new BigInteger(92)]; // Backslash
+            yield return ["'\\u0041'", new BigInteger(65)];
+            yield return ["'\\U00000041'", new BigInteger(65)];
+            yield return ["'\\x41'", new BigInteger(65)];
         }
     }
 }

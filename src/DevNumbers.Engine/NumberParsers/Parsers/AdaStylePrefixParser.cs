@@ -19,6 +19,8 @@ internal class AdaStylePrefixParser : NumberParserBase
 
         // If there's a closing hash, use that
         int secondHash = input.IndexOf('#', firstHash + 1);
+        if (secondHash >= 0 && secondHash != input.Length - 1) return false;
+
         string baseStr = input[..firstHash];
         string valueStr = secondHash > 0
             ? input[(firstHash + 1)..secondHash]

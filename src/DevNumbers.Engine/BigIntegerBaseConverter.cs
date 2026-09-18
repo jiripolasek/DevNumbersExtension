@@ -92,6 +92,11 @@ public static class BigIntegerBaseConverter
             throw new FormatException("Group separator '_' is not allowed.");
         }
 
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            throw new FormatException("Input must contain at least one digit.");
+        }
+
         BigInteger value = BigInteger.Zero;
         foreach (char c in input)
         {
