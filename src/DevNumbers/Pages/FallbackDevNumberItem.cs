@@ -4,9 +4,12 @@
 //
 // ------------------------------------------------------------
 
+using System.Globalization;
+using System.Text;
 using JPSoftworks.DevNumbers.Engine.NumberParsers;
 using JPSoftworks.DevNumbers.Engine.NumberParsers.Abstraction;
 using JPSoftworks.DevNumbers.Helpers;
+using JPSoftworks.DevNumbers.Resources;
 using Microsoft.CommandPalette.Extensions;
 using Microsoft.CommandPalette.Extensions.Toolkit;
 
@@ -14,6 +17,8 @@ namespace JPSoftworks.DevNumbers.Pages;
 
 internal sealed partial class FallbackDevNumberItem : FallbackCommandItem
 {
+    private static readonly CompositeFormat BitWidthFormat = CompositeFormat.Parse(Strings.Filter_BitWidth);
+
     private readonly NumberBaseConversionPage _page;
     private readonly SettingsManager _settingsManager;
 
@@ -38,7 +43,7 @@ internal sealed partial class FallbackDevNumberItem : FallbackCommandItem
         try
         {
             var parsedQuery = SwitchParser.Parse(query);
-            var result = NumberQuery.Parse(parsedQuery, this._settingsManager.DefaultFormatStyle);
+            var result = NumberQuery.Parse(parsedQuery, this._settingsManager.DefaultFormatStyle, this._page.SelectedBitLength);
             var formatInfo = new FormatInfo(result.FormatStyle);
             var decimalValue = NumberParser.FormatWithFallback(result.Value, NumberBase.Decimal, formatInfo);
             var hexadecimalValue = NumberParser.FormatWithFallback(result.Value, NumberBase.Hexadecimal, formatInfo);
@@ -50,6 +55,11 @@ internal sealed partial class FallbackDevNumberItem : FallbackCommandItem
             this._page.SearchText = query;
             this.Subtitle = $"decimal {decimalValue} • hexadecimal {hexadecimalValue} • " +
                 $"binary {binaryValue} • octal {octalValue}";
+            if (this._page.SelectedBitLength > 0 || parsedQuery.Options.BitLength > 0)
+            {
+                this.Subtitle += " • " + string.Format(CultureInfo.CurrentCulture, BitWidthFormat, result.BitLength);
+            }
+
             if (parsedQuery.HasErrors)
             {
                 this.Subtitle = $"{parsedQuery.Errors[0].Message} • {this.Subtitle}";

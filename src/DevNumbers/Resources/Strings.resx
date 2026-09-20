@@ -255,4 +255,25 @@
   <data name="StyleName_CStyle_Inner" xml:space="preserve">
     <value>C style</value>
   </data>
+  <data name="ResultSection_Input" xml:space="preserve">
+    <value>Input</value>
+  </data>
+  <data name="ResultSection_Numbers" xml:space="preserve">
+    <value>Numbers</value>
+  </data>
+  <data name="ResultSection_ByteOrder" xml:space="preserve">
+    <value>Byte order</value>
+  </data>
+  <data name="ResultSection_Text" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="Filter_AutoBitWidth" xml:space="preserve">
+    <value>Auto width</value>
+  </data>
+  <data name="Filter_BitWidth" xml:space="preserve">
+    <value>{0}-bit width</value>
+  </data>
+  <data name="QueryItem_BitWidthOverride" xml:space="preserve">
+    <value>{0}-bit width from /length</value>
+  </data>
 </root>

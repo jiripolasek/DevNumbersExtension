@@ -17,7 +17,7 @@ internal sealed record NumberQuery(
     int BitLength,
     FormatStyle FormatStyle)
 {
-    public static NumberQuery Parse(ParseResult query, FormatStyle? defaultFormatStyle)
+    public static NumberQuery Parse(ParseResult query, FormatStyle? defaultFormatStyle, int defaultBitLength = -1)
     {
         var number = NumberParser.Parse(query.Query);
         if (number is null || number.NumberBase == NumberBase.Unknown)
@@ -25,7 +25,7 @@ internal sealed record NumberQuery(
             throw new FormatException("Unrecognized number format.");
         }
 
-        var bitLength = query.Options.BitLength;
+        var bitLength = query.Options.BitLength > 0 ? query.Options.BitLength : defaultBitLength;
         var value = number.Value;
 
         // a) If a bit length is specified, apply it to the parsed input:

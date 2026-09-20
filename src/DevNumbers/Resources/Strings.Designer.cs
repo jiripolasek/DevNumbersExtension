@@ -19,7 +19,7 @@ namespace JPSoftworks.DevNumbers.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Strings {
@@ -105,6 +105,24 @@ namespace JPSoftworks.DevNumbers.Resources {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to Auto width.
+        /// </summary>
+        internal static string Filter_AutoBitWidth {
+            get {
+                return ResourceManager.GetString("Filter_AutoBitWidth", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0}-bit width.
+        /// </summary>
+        internal static string Filter_BitWidth {
+            get {
+                return ResourceManager.GetString("Filter_BitWidth", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to binary.
         /// </summary>
@@ -241,11 +259,56 @@ namespace JPSoftworks.DevNumbers.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}-bit width from /length.
+        /// </summary>
+        internal static string QueryItem_BitWidthOverride {
+            get {
+                return ResourceManager.GetString("QueryItem_BitWidthOverride", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Did you mean {0} input as binary?.
         /// </summary>
         internal static string QueryItem_DidYouMean0AsBinary {
             get {
                 return ResourceManager.GetString("QueryItem_DidYouMean0AsBinary", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Byte order.
+        /// </summary>
+        internal static string ResultSection_ByteOrder {
+            get {
+                return ResourceManager.GetString("ResultSection_ByteOrder", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Input.
+        /// </summary>
+        internal static string ResultSection_Input {
+            get {
+                return ResourceManager.GetString("ResultSection_Input", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Numbers.
+        /// </summary>
+        internal static string ResultSection_Numbers {
+            get {
+                return ResourceManager.GetString("ResultSection_Numbers", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Text.
+        /// </summary>
+        internal static string ResultSection_Text {
+            get {
+                return ResourceManager.GetString("ResultSection_Text", resourceCulture);
             }
         }
         
