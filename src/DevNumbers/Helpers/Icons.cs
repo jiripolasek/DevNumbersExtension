@@ -1,7 +1,7 @@
 ﻿// ------------------------------------------------------------
-// 
+//
 // Copyright (c) Jiří Polášek. All rights reserved.
-// 
+//
 // ------------------------------------------------------------
 
 using Microsoft.CommandPalette.Extensions.Toolkit;
@@ -36,6 +36,8 @@ public static class Icons
     public static IconInfo Info { get; } = new("\uE946");
 
     public static IconInfo InfoSolid { get; } = new("\uF167");
+
+    public static IconInfo Unit { get; } = new("\uECC6");
 
     public static IconInfo Help { get; } = new("\uE9CE");
 

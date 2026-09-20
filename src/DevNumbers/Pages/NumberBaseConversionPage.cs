@@ -4,7 +4,9 @@
 // 
 // ------------------------------------------------------------
 
+using System.Globalization;
 using System.Numerics;
+using System.Text;
 using JPSoftworks.CommandPalette.Extensions.Toolkit.Logging;
 using JPSoftworks.DevNumbers.Engine;
 using JPSoftworks.DevNumbers.Engine.NumberParsers.Abstraction;
@@ -17,6 +19,10 @@ namespace JPSoftworks.DevNumbers.Pages;
 
 internal sealed partial class NumberBaseConversionPage : DynamicListPage
 {
+    private static readonly CompositeFormat BitWidthFormat = CompositeFormat.Parse(Strings.Filter_BitWidth);
+
+    private static readonly CompositeFormat BitWidthOverrideFormat = CompositeFormat.Parse(Strings.QueryItem_BitWidthOverride);
+
     private readonly SettingsManager _settingsManager;
 
     private IListItem[] _results;
@@ -51,6 +57,27 @@ internal sealed partial class NumberBaseConversionPage : DynamicListPage
             ]
         };
         this._results = [this._typeNumberListItem];
+
+        var filters = new BitWidthFilters { CurrentFilterId = "auto" };
+        filters.PropChanged += this.Filters_PropChanged;
+        this.Filters = filters;
+    }
+
+    internal int SelectedBitLength => this.Filters?.CurrentFilterId switch
+    {
+        "8" => 8,
+        "16" => 16,
+        "32" => 32,
+        "64" => 64,
+        _ => -1
+    };
+
+    private void Filters_PropChanged(object sender, IPropChangedEventArgs args)
+    {
+        if (args.PropertyName == nameof(IFilters.CurrentFilterId))
+        {
+            this.UpdateSearchTextCore(this.SearchText);
+        }
     }
 
     public override IListItem[] GetItems()
@@ -118,7 +145,7 @@ internal sealed partial class NumberBaseConversionPage : DynamicListPage
         NumberQuery numberQuery;
         try
         {
-            numberQuery = NumberQuery.Parse(queryParseResult, this._settingsManager.DefaultFormatStyle);
+            numberQuery = NumberQuery.Parse(queryParseResult, this._settingsManager.DefaultFormatStyle, this.SelectedBitLength);
         }
         catch (FormatException)
         {
@@ -132,7 +159,6 @@ internal sealed partial class NumberBaseConversionPage : DynamicListPage
     private void BuildConversionListItems(Options options, NumberQuery numberQuery, List<IListItem> results)
     {
         var numberParseResult = numberQuery.Number;
-        var explicitBitLength = options.BitLength;
         var actualBitLength = numberQuery.BitLength;
         var actualValue = numberQuery.Value;
 
@@ -149,21 +175,30 @@ internal sealed partial class NumberBaseConversionPage : DynamicListPage
 
         var targetStyle = numberQuery.FormatStyle;
 
-        results.Add(new ParsedValueListItem(numberParseResult, explicitBitLength));
+        results.Add(new Separator(Strings.ResultSection_Input));
+        var parsedValueItem = new ParsedValueListItem(numberParseResult, actualBitLength);
+        if (options.BitLength > 0)
+        {
+            parsedValueItem.Subtitle += " • " + string.Format(CultureInfo.CurrentCulture, BitWidthOverrideFormat, options.BitLength);
+        }
+
+        results.Add(parsedValueItem);
         results.AddRange(this.AddDidYouMean(numberParseResult));
+        results.Add(new Separator(Strings.ResultSection_Numbers));
         results.Add(new NumericValueListItem(actualValue, NumberBase.Decimal, Strings.NumberBase_DecimalLabel!, targetStyle));
 
         AddExtraDecimalEntry(numberParseResult, actualValue, actualBitLength, results, targetStyle);
 
         AddPower2NumberBases(results, actualValue, targetStyle);
 
-        // Swap the value after applying /length truncation.
+        // Swap the value after applying the selected bit width.
         if (ByteOrderHelper.TryByteSwap16(actualValue, out var byteSwappedValue))
         {
             var byteSwappedNumberBase = numberParseResult.NumberBase == NumberBase.Char
                 ? NumberBase.Hexadecimal
                 : numberParseResult.NumberBase;
 
+            results.Add(new Separator(Strings.ResultSection_ByteOrder));
             results.Add(new NumericValueListItem(
                 byteSwappedValue,
                 byteSwappedNumberBase,
@@ -217,6 +252,11 @@ internal sealed partial class NumberBaseConversionPage : DynamicListPage
         try
         {
             var characterInterpretations = BigIntegerCharacterInference.GetValidCharacterInterpretations(actualValue);
+            if (characterInterpretations.Count > 0)
+            {
+                results.Add(new Separator(Strings.ResultSection_Text));
+            }
+
             foreach (var characterResult in characterInterpretations)
             {
                 results.Add(new ListItem
@@ -239,5 +279,21 @@ internal sealed partial class NumberBaseConversionPage : DynamicListPage
         return parsedInput.NumberBase == NumberBase.Decimal && parsedInput.RawValue.All(static c => c is '1' or '0')
             ? [new DidYouMeanBinaryListItem(parsedInput.RawValue, parsedInput.NumberBase, this)]
             : [];
+    }
+
+    private sealed partial class BitWidthFilters : Filters
+    {
+        private static readonly int[] BitWidths = [8, 16, 32, 64];
+
+        public override IFilterItem[] GetFilters() =>
+        [
+            new Filter { Id = "auto", Name = Strings.Filter_AutoBitWidth, Icon = Icons.Bullseye },
+            .. BitWidths.Select(bitLength => new Filter
+            {
+                Id = bitLength.ToString(CultureInfo.InvariantCulture),
+                Icon = Icons.Unit,
+                Name = string.Format(CultureInfo.CurrentCulture, BitWidthFormat, bitLength)
+            })
+        ];
     }
 }

@@ -60,7 +60,7 @@ The extension automatically detects the number format based on the input and con
 
 Specifies the bit length of the number to be converted. The value must a positive integer or a valid keyword (see below).
 
-Extension automatically detects the bit length based on the input number, but you can override it by specifying the `/length` parameter.
+Use the bit-width filter to choose Auto, 8, 16, 32, or 64 bits. Auto keeps positive values at their full size and infers a width for negative values. A `/length` parameter overrides the filter, including custom widths such as `/length:24`. The Input section shows when the query specifies the width.
 
 If the requested length is less than the actual length of the number, the number will be truncated to fit the specified length and warning will be shown in the output.
 

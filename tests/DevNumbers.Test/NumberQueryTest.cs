@@ -14,6 +14,28 @@ namespace JPSoftworks.DevNumbers.Test;
 public class NumberQueryTest
 {
     [Theory]
+    [InlineData("0x1FF", 8, 255, 8)]
+    [InlineData("0x1FF", 16, 511, 16)]
+    [InlineData("0x1FF", -1, 511, -1)]
+    [InlineData("0x1FF /length:16", 8, 511, 16)]
+    [InlineData("0x1000000 /length:24", 64, 0, 24)]
+    [InlineData("-1", 8, 255, 8)]
+    [InlineData("-129", -1, -129, 16)]
+    [InlineData("'/'", 8, 47, 8)]
+    public void Parse_DefaultBitLength_AppliesUnlessQueryOverridesIt(
+        string input, int defaultBitLength, int expectedValue, int expectedBitLength)
+    {
+        var parsedQuery = SwitchParser.Parse(input);
+        var originalOptions = parsedQuery.Options with { };
+
+        var result = NumberQuery.Parse(parsedQuery, null, defaultBitLength);
+
+        Assert.Equal(new BigInteger(expectedValue), result.Value);
+        Assert.Equal(expectedBitLength, result.BitLength);
+        Assert.Equal(originalOptions, parsedQuery.Options);
+    }
+
+    [Theory]
     [InlineData("0xFF /length:8", 255, 255, 8)]
     [InlineData("0x1FF /length:8", 511, 255, 8)]
     [InlineData("/length:byte 0x1FF", 511, 255, 8)]
